@@ -2,20 +2,17 @@ import mongoose from "mongoose";
 import "dotenv/config";
 
 const verifyEnvVariables = () => {
-    const user = process.env.MONGO_USER;
-    const password = process.env.MONGO_PASSWORD;
-    if (!user || !password) {
-        throw new Error("Missing Env Variables User and Password");
+    const url = process.env.MONGO_URL;
+    if (!url) {
+        throw new Error("Missing Mongo Url connection");
     }
-    return { user, password };
+    return { url };
 };
 
 export const connectDatabase = async () => {
-    const { user, password } = verifyEnvVariables();
-    await mongoose
-        .connect(
-            `mongodb+srv://${user}:${password}@db-users-mongo.xhn7dld.mongodb.net/?retryWrites=true&w=majority`
-        )
+    const { url } = verifyEnvVariables();
+    return await mongoose
+        .connect(url)
         .then(() => {
             console.log("MongoDB Connected...");
         })

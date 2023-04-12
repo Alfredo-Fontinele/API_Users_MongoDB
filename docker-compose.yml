@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+    api:
+        build:
+            context: .
+        restart: always
+        container_name: api_mongo_db
+        environment:
+            MONGO_URL: ${MONGO_URL}
+        ports:
+            - ${PORT}:${PORT}

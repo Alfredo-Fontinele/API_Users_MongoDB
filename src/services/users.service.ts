@@ -1,5 +1,5 @@
+import { createUserSchema, updateUserSchema } from "../schemas/users.schema";
 import { User } from "../entities/User";
-import { updateUserSchema } from "../schemas/users.schema";
 
 interface IUserCreate {
     name: string;
@@ -14,20 +14,23 @@ interface IUserUpdate {
 }
 
 export const UsersService = {
-    options: "name email",
+    fields_user: "name email",
     async create(body: IUserCreate) {
-        const newUser = await User.create(body);
-        return await User.findById(newUser._id).select(this.options);
+        const validatedBody = await createUserSchema.validate(body, {
+            stripUnknown: true,
+        });
+        const newUser = await User.create(validatedBody);
+        return await User.findById(newUser._id).select(this.fields_user);
     },
     async findAll() {
-        return await User.find().select(this.options);
+        return await User.find().select(this.fields_user);
     },
     async findOne(id: string) {
         return await User.findOne({
             where: {
                 id,
             },
-        }).select(this.options);
+        }).select(this.fields_user);
     },
     async update(id: string, body: IUserUpdate) {
         const validatedBody = await updateUserSchema.validate(body, {
